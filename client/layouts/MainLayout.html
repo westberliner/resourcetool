@@ -1,0 +1,16 @@
+<template name="MainLayout">
+  <header>
+    <div class="nav">
+      {{> Navigation}}
+    </div>
+
+  </header>
+  <main>
+    <div class="container-fluid">
+      <div class="content">
+        {{> Template.dynamic template=main}}
+      </div>
+    </div>
+  </main>
+  {{> overlay}}
+</template>
