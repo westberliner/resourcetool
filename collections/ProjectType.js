@@ -1,4 +1,4 @@
-ResourceTypes = new Mongo.Collection('ResourceTypes');
+ProjectTypes = new Mongo.Collection('ProjectTypes');
 
 Schema = new SimpleSchema({
   label: {
@@ -21,4 +21,4 @@ Schema = new SimpleSchema({
   }
 });
 
-ResourceTypes.attachSchema(Schema);
+ProjectTypes.attachSchema(Schema);
