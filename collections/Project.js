@@ -8,7 +8,7 @@ Schema = new SimpleSchema({
   active: {
     type: Boolean,
     label: "Active",
-    autoValue: function() {return 1},
+    autoValue: function() {return true},
     optional: true
   },
   projectType: {

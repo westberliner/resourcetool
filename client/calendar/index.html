@@ -1,3 +1,12 @@
 <template name="calendarIndex">
+  <table>
+    {{# if Template.subscriptionsReady }}
+      {{# each project in projects}}
+        <tr><th>{{ project.name }}</th></tr>
+      {{/each}}
+    {{else}}
+      <p> loading </p>
+    {{/if}}
+  </table>
   <button id="showOverlay">Overlay</button>
 </template>

@@ -8,7 +8,7 @@ Schema = new SimpleSchema({
   active: {
     type: Boolean,
     label: "Active",
-    autoValue: function() {return 1},
+    autoValue: function() {return true},
     optional: true
   },
   workdays: {
@@ -18,7 +18,11 @@ Schema = new SimpleSchema({
   },
   projectType: {
     type: String,
-    label: "Type"
+    label: "Project Type"
+  },
+  resourceType: {
+    type: String,
+    label: "Resources Type"
   },
   color: {
     type: String,
