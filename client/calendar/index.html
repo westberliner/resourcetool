@@ -1,8 +1,8 @@
 <template name="calendarIndex">
   <table>
     {{# if Template.subscriptionsReady }}
-      {{# each project in projects}}
-        <tr><th>{{ project.name }}</th></tr>
+      {{# each resource in resources}}
+        <tr><th>{{ resource.name }}</th></tr>
       {{/each}}
     {{else}}
       <p> loading </p>

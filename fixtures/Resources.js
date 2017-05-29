@@ -4,7 +4,7 @@ initResources = function() {
       {name: "Resource 1", color: "#ffffff", resourceType: "default", projectType: "default"},
       {name: "Resource 2", color: "#ffffff", resourceType: "default", projectType: "default"},
       {name: "Resource 3", color: "#ffffff", resourceType: "default", projectType: "default"},
-      {name: "Resources 4", color: "#ffffff", resourceType: "default", projectType: "default"}
+      {name: "Resource 4", color: "#ffffff", resourceType: "default", projectType: "default"}
     ];
     _.each(resources, function(resource){
       Resources.insert({
