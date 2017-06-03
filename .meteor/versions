@@ -57,6 +57,7 @@ id-map@1.0.9
 jquery@1.11.10
 kadira:blaze-layout@2.3.0
 kadira:flow-router@2.12.1
+kostanos:autoform-daysofweek@1.0.3
 kurounin:pagination@1.0.13
 kurounin:pagination-blaze@1.0.2
 launch-screen@1.1.1
