@@ -1,8 +1,11 @@
 <template name="calendarIndex">
   <table>
+    <tr>
+      {{> calendarRowHeader }}
+    </tr>
     {{# if Template.subscriptionsReady }}
       {{# each resource in resources}}
-        <tr><th>{{ resource.name }}</th></tr>
+      <tr>{{> calendarRow resource=resource }}</tr>
       {{/each}}
     {{else}}
       <p> loading </p>

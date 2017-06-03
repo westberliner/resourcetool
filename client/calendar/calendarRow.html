@@ -1,0 +1,6 @@
+<template name="calendarRow">
+  <th>{{ resource.name }}</th>
+  {{#each week in weeks }}
+    <td>{{> days week=week}}</td>
+  {{/each}}
+</template>

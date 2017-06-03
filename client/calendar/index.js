@@ -4,7 +4,8 @@ Template.calendarIndex.helpers({
   },
   resources: ()=> {
     return Resources.find({active: true});
-  }
+  },
+  
 });
 
 Template.calendarIndex.events({
@@ -21,3 +22,8 @@ Template.calendarIndex.onCreated(function() {
     self.subscribe('entries');
   })
 })
+
+// basic functions
+getNumberOfWeeks = function() {
+  return parseInt(($(window).innerWidth() - 120)/200);
+}
