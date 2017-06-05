@@ -11,5 +11,9 @@
       <p> loading </p>
     {{/if}}
   </table>
-  <button id="showOverlay">Overlay</button>
+  <ul class="projects">
+    {{#each project in projects }}
+    <li><a href="#" class="edit-project" data-project-id="{{project._id}}">{{project.name}}</a></li>
+    {{/each}}
+  </ul>
 </template>
