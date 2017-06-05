@@ -1,5 +1,18 @@
 Resources = new Mongo.Collection('Resources');
 
+// todo modify access
+Resources.allow({
+  insert: function(userId, doc) {
+    return true;
+  },
+  update: function(userId, doc) {
+    return true;
+  },
+  remove: function(userId, doc) {
+    return true;
+  }
+});
+
 Schema = new SimpleSchema({
   name: {
     type: String,

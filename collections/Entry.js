@@ -1,15 +1,34 @@
 // Init Collection
 Entries = new Mongo.Collection('Entries');
 
+// todo modify access
+Entries.allow({
+  insert: function(userId, doc) {
+    return true;
+  },
+  update: function(userId, doc) {
+    return true;
+  },
+  remove: function(userId, doc) {
+    return true;
+  }
+});
+
 // Schema
 Schema = new SimpleSchema({
   from: {
     type: Date,
-    label: "From"
+    label: "From",
+    autoform: {
+      type: 'bootstrap-datepicker'
+    }
   },
   till: {
     type: Date,
-    label: "Till"
+    label: "Till",
+    autoform: {
+      type: 'bootstrap-datepicker'
+    }
   },
   repeat: {
     type: [Number],
