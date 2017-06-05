@@ -1,3 +1,7 @@
 <template name="days">
-  day
+  {{# each day in daysOfTheWeek}}
+    <ul class="calendar-day" id="day-{{day.date}}">
+      <li class="add" data-resource-id="{{resourceId}}" data-day="{{day.date}}"></li>
+    </ul>
+  {{/each}}
 </template>

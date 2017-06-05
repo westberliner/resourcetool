@@ -1,6 +1,6 @@
 <template name="calendarRow">
-  <th>{{ resource.name }}</th>
+  <th><a href="#" class="edit-resource" data-resource-id="{{resource._id}}">{{ resource.name }}</a></th>
   {{#each week in weeks }}
-    <td>{{> days week=week}}</td>
+    <td class="calendar-week" id="kw-{{week}}">{{> days week=week resourceId=resource._id}}</td>
   {{/each}}
 </template>
