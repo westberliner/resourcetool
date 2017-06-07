@@ -1,5 +1,13 @@
 <template name="addEntry">
   <div class="container">
-    {{> quickForm collection="Entries" id="insert-entry-form" type="insert" }}
+    {{#autoForm collection="Entries" id="insert-entry-form" type="insert"}}
+      {{> afQuickField name="from" }}
+      {{> afQuickField name="till" }}
+      {{> afQuickField name="repeat" }}
+      {{> afQuickField name="resource" }}
+      {{> afQuickField name="project" options=selectProject }}
+      {{> afQuickField name="entryType" }}
+      {{> afQuickField name="allday" }}
+    {{/autoForm}}
   </div>
 </template>
