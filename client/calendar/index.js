@@ -28,6 +28,7 @@ Template.calendarIndex.onCreated(function() {
     self.subscribe('projects');
     self.subscribe('resources');
     self.subscribe('entries');
+    self.subscribe('entryTypes');
   })
 })
 

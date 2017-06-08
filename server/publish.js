@@ -7,3 +7,6 @@ Meteor.publish('resources', function(){
 Meteor.publish('entries', function(){
   return Entries.find({});
 });
+Meteor.publish('entryTypes', function(){
+  return EntryTypes.find({});
+});
