@@ -1,6 +1,6 @@
 Template.calendarIndex.helpers({
   projects: ()=> {
-    return Projects.find({active: true})
+    return Projects.find({active: true});
   },
   resources: ()=> {
     return Resources.find({active: true});
@@ -28,6 +28,7 @@ Template.calendarIndex.onCreated(function() {
     self.subscribe('projects');
     self.subscribe('resources');
     self.subscribe('entries');
+
     self.subscribe('entryTypes');
   })
 })

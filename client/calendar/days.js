@@ -1,9 +1,15 @@
 Template.days.helpers({
   daysOfTheWeek: function() {
     var currentWeek = moment().week(Template.instance().data.week),
-        days = [];
+        days = [],
+        resourceId = Template.instance().data.resourceId;
     for (var i = 1; i <= 5; i++) {
-      var day = {cssDate: currentWeek.isoWeekday(i).format('D-M-YY'), valueDate: currentWeek.isoWeekday(i).format('M/D/YY')};
+      var currentDate = currentWeek.isoWeekday(i),
+          day = {
+            cssDate: currentWeek.isoWeekday(i).format('D-M-YY'),
+            valueDate: currentWeek.isoWeekday(i).format('M/D/YY')
+         };
+      day.entries = Entries.find({resource: resourceId, from: {$lte: currentDate.toDate()}}).fetch();
       days.push(day);
     }
     return days;

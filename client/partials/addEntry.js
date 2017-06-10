@@ -11,9 +11,14 @@ Template.registerHelper("selectResource", function() {
   return resources;
 });
 Template.registerHelper("selectEntryType", function() {
-  console.log(Template.instance().data);
   entryTypes = EntryTypes.find().map(function(entryType){
     return {label: entryType.label, value: entryType.machineName}
   });
   return entryTypes;
+});
+
+Template.addEntry.events({
+  'click button[type=submit]': function(e, template) {
+    Overlay.hide();
+  }
 });
