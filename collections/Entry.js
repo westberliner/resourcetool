@@ -63,5 +63,7 @@ Schema = new SimpleSchema({
     }
   }
 });
-
+// Index maybe for later. not sure if this is a good idea
+//Entries._ensureIndex({resource:1, project:1}, {unique: 1});
+// add schema to collection
 Entries.attachSchema(Schema);

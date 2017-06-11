@@ -13,7 +13,15 @@
   </table>
   <ul class="projects">
     {{#each project in projects }}
-    <li><a href="#" class="edit-project" data-project-id="{{project._id}}">{{project.name}}</a></li>
+      <li><a href="#" class="edit-project" data-project-id="{{project._id}}">{{project.name}}</a></li>
     {{/each}}
+
   </ul>
+  <style type="text/css">
+    {{#each project in projects }}
+      {{concat "." project._id}} {
+        {{concat "background: " project.color ";" }}
+      }
+    {{/each}}
+  </style>
 </template>

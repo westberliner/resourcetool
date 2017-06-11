@@ -9,7 +9,7 @@ Template.days.helpers({
             cssDate: currentWeek.isoWeekday(i).format('D-M-YY'),
             valueDate: currentWeek.isoWeekday(i).format('M/D/YY')
          };
-      day.entries = Entries.find({resource: resourceId, from: {$lte: currentDate.toDate()}}).fetch();
+      day.entries = Entries.find({resource: resourceId, from: {$lte: currentDate.toDate()}, till: {$gte: currentDate.toDate()}}).fetch();
       days.push(day);
     }
     return days;
