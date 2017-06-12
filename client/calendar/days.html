@@ -2,7 +2,7 @@
   {{# each day in daysOfTheWeek}}
     <ul class="calendar-day" id="day-{{day.cssDate}}">
       {{#each entry in day.entries }}
-      <li data-edit-entry="{{entry._id}}" class="{{entry.project}}"></li>
+      <li data-edit-entry="{{entry._id}}" class="{{entry.project}} entry"></li>
       {{/each}}
       <li class="add" data-resource-id="{{resourceId}}" data-day="{{day.valueDate}}"></li>
     </ul>

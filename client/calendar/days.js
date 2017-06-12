@@ -22,5 +22,13 @@ Template.days.events({
         id = dom.attr('data-resource-id'),
         day = dom.attr('data-day');
     Overlay.show('addEntry', {resourceId: id, dayFrom: day});
+  },
+  'click .entry': function(e, template) {
+    var dom = $(e.currentTarget),
+        id = dom.attr('data-edit-entry');
+    if(entry = Entries.findOne(id)) {
+      Overlay.show('editEntry', {entry: entry});
+    }
+
   }
 });

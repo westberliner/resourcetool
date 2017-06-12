@@ -1,0 +1,14 @@
+<template name="editEntry">
+  <div class="container">
+    {{#autoForm collection="Entries" id="insert-entry-form" type="update" doc=entry autosave=autoSaveMode}}
+      {{> afQuickField name="from" defaultValue=dayFrom }}
+      {{> afQuickField name="till" defaultValue=dayTill }}
+      {{> afQuickField name="repeat" }}
+      {{> afQuickField name="resource" options=selectResource defaultValue=resourceId }}
+      {{> afQuickField name="project" options=selectProject defaultValue=projectId }}
+      {{> afQuickField name="entryType" options=selectEntryType defaultValue="default" }}
+      {{> afQuickField name="allday" }}
+      <button type="submit" class="btn btn-primary">Update</button>
+    {{/autoForm}}
+  </div>
+</template>
