@@ -1,0 +1,10 @@
+<template name="timeline">
+  <div  id="timeline-chart"></div>
+  <style type="text/css">
+    {{#each project in projects }}
+      {{concat ".vis.timeline .item." project._id}} {
+        {{concat "background: " project.color ";" }}
+      }
+    {{/each}}
+  </style>
+</template>
