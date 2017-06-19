@@ -1,5 +1,11 @@
 <template name="timeline">
   <div  id="timeline-chart"></div>
+  <ul class="projects">
+    {{#each project in projects }}
+      <li><a href="#" class="edit-project" data-project-id="{{project._id}}">{{project.name}}</a></li>
+    {{/each}}
+
+  </ul>
   <style type="text/css">
     {{#each project in projects }}
       {{concat ".vis.timeline .item." project._id}} {

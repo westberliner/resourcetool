@@ -3,15 +3,23 @@ var items;
 
 var addGroups = function() {
   Resources.find().map(function(res) {
-    groups.add({content: res.name, id: res._id, value: res.name, className: res._id});
+    groups.add({content: createResourceLink(res._id, res.name), id: res._id, value: res.name, className: res._id});
   });
+}
+
+var createResourceLink = function(id, name) {
+  var textNode = document.createTextNode(name);
+  var link = document.createElement('a');
+  link.setAttribute('class', 'edit-resource');
+  link.setAttribute('data-resource-id', id);
+  link.appendChild(textNode);
+  return link;
 }
 var addEntries = function() {
   Entries.find().map(function(entry) {
     var item = {start: new Date(entry.from), end: new Date(entry.till), group: entry.resource, className: entry.project, id: entry._id};
-    console.log(item.start, entry.from);
     items.add(item);
-    //groups.add({content: res.name, id: res._id, value: res.name, className: res._id});
+
   });
 }
 var renderTimeline = function() {
@@ -57,7 +65,12 @@ Template.timeline.onCreated(function() {
     added: function (id, fields) {
     },
     changed: function(id, fields) {
-      groups.update({id: id, content: fields.name, value: fields.name, className: id});
+      if(undefined != fields.name) {
+        // for some reason we need to clear content. otherwise it will append the new content
+        groups.update({id: id, content: ''});
+        var item = {id: id, content: createResourceLink(id, fields.name )};
+        groups.update(item);
+      }
     },
     removed: function (id) {
     }
@@ -77,5 +90,16 @@ Template.timeline.onRendered(function() {
 Template.timeline.helpers({
   projects: ()=> {
     return Projects.find({active: true});
+  }
+});
+
+Template.timeline.events({
+  'click .edit-project': function(e, template) {
+    var id = $(e.currentTarget).attr('data-project-id');
+    Overlay.show('editProject', {project: Projects.findOne(id)});
+  },
+  'click .edit-resource': function(e, template) {
+    var id = $(e.currentTarget).attr('data-resource-id');
+    Overlay.show('editResource', {resource: Resources.findOne(id)});
   }
 });

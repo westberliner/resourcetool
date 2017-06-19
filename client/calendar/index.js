@@ -9,9 +9,6 @@ Template.calendarIndex.helpers({
 });
 
 Template.calendarIndex.events({
-  'click #showOverlay': function(e, template) {
-    Overlay.show('Overlay');
-  },
   'click .edit-project': function(e, template) {
     var id = $(e.currentTarget).attr('data-project-id');
     Overlay.show('editProject', {project: Projects.findOne(id)});
