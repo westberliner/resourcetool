@@ -45,7 +45,10 @@ var renderTimeline = function() {
     editable: true,
     groupEditable: true,
     start: new Date(2015, 6, 1),
-    end: new Date(2015, 10, 1)
+    end: new Date(2015, 10, 1),
+    scale: 'week',
+    step: 1,
+    dataAttributes: ['id']
   };
   var timeline = new vis.Timeline(container);
   timeline.setOptions(options);
@@ -75,6 +78,20 @@ Template.timeline.onCreated(function() {
     removed: function (id) {
     }
   });
+  Entries.find().observeChanges({
+    added: function (id, fields) {
+    },
+    changed: function(id, fields) {
+      if(undefined != fields.project) {
+        // for some reason we need to clear content. otherwise it will append the new content
+        var item = {id: id, className: fields.project};
+        items.update(item);
+      }
+    },
+    removed: function (id) {
+    }
+  });
+
 })
 
 Template.timeline.onRendered(function() {
@@ -101,5 +118,9 @@ Template.timeline.events({
   'click .edit-resource': function(e, template) {
     var id = $(e.currentTarget).attr('data-resource-id');
     Overlay.show('editResource', {resource: Resources.findOne(id)});
+  },
+  'click .item': function(e, template) {
+    var id = $(e.currentTarget).attr('data-id');
+    Overlay.show('editEntry', {entry: Entries.findOne(id)});
   }
 });
