@@ -1,12 +1,3 @@
-var groups;
-var items;
-
-var addGroups = function() {
-  Resources.find().map(function(res) {
-    groups.add({content: createResourceLink(res._id, res.name), id: res._id, value: res.name, className: res._id});
-  });
-}
-
 var createResourceLink = function(id, name) {
   var textNode = document.createTextNode(name);
   var link = document.createElement('a');
@@ -15,67 +6,23 @@ var createResourceLink = function(id, name) {
   link.appendChild(textNode);
   return link;
 }
-var addEntries = function() {
-  Entries.find().map(function(entry) {
-    var item = {start: new Date(entry.from), end: new Date(entry.till), group: entry.resource, className: entry.project, id: entry._id};
-    items.add(item);
-
-  });
-}
-var renderTimeline = function() {
-  groups = new vis.DataSet();
-  items = new vis.DataSet();
-  // create visualization
-  var container = document.getElementById('timeline-chart');
-  var options = {
-    // option groupOrder can be a property name or a sort function
-    // the sort function must compare two groups and return a value
-    //     > 0 when a > b
-    //     < 0 when a < b
-    //       0 when a == b
-    groupOrder: function (a, b) {
-      return a.value - b.value;
-    },
-    groupOrderSwap: function (a, b, groups) {
-    	var v = a.value;
-    	a.value = b.value;
-    	b.value = v;
-    },
-    orientation: 'top',
-    editable: true,
-    groupEditable: true,
-    start: new Date(2015, 6, 1),
-    end: new Date(2015, 10, 1),
-    scale: 'week',
-    step: 1,
-    dataAttributes: ['id']
-  };
-  var timeline = new vis.Timeline(container);
-  timeline.setOptions(options);
-  timeline.setGroups(groups);
-  timeline.setItems(items);
-
-};
-
-Template.timeline.events({
-
-});
 
 Template.timeline.onCreated(function() {
   self = this;
-  
+
   Resources.find().observeChanges({
     added: function (id, fields) {
     },
     changed: function(id, fields) {
       if(undefined != fields.name) {
         // for some reason we need to clear content. otherwise it will append the new content
-        groups.update({id: id, content: ''});
+        timeline.groups.update({id: id, content: ''});
         var item = {id: id, content: createResourceLink(id, fields.name )};
-        groups.update(item);
+        timeline.groups.update(item);
       }
     },
     removed: function (id) {
+      timeline.groups.remove(id);
     }
   });
   Entries.find().observeChanges({
@@ -85,22 +32,26 @@ Template.timeline.onCreated(function() {
       if(undefined != fields.project) {
         // for some reason we need to clear content. otherwise it will append the new content
         var item = {id: id, className: fields.project};
-        items.update(item);
+        timeline.entries.update(item);
       }
     },
     removed: function (id) {
+      timeline.entries.remove(id);
     }
   });
 
 })
 
 Template.timeline.onRendered(function() {
-  renderTimeline();
+  var container = document.getElementById('timeline-chart');
+
+  timeline.init(container);
+
   FlowRouter.subsReady("resources", function() {
-    addGroups();
+    timeline.addGroups();
   });
   FlowRouter.subsReady("entries", function() {
-    addEntries();
+    timeline.addEntries();
   });
 });
 
@@ -121,6 +72,64 @@ Template.timeline.events({
   },
   'click .item': function(e, template) {
     var id = $(e.currentTarget).attr('data-id');
-    Overlay.show('editEntry', {entry: Entries.findOne(id)});
+   // Overlay.show('editEntry', {entry: Entries.findOne(id)});
   }
 });
+
+var timeline = {
+  container: null,
+  entries: new vis.DataSet(),
+  groups: new vis.DataSet(),
+  timeline: null,
+  init: function(container) {
+    this.container = container;
+    this.timeline = new vis.Timeline(this.container);
+    this.timeline.setOptions(this.options);
+    this.timeline.setGroups(this.groups);
+    this.timeline.setItems(this.entries);
+  },
+  addEntries: function() {
+    var self = this;
+    Entries.find().map(function(entry) {
+      var item = {start: new Date(entry.from), end: new Date(entry.till), group: entry.resource, className: entry.project, id: entry._id};
+      self.entries.add(item);
+    });
+  },
+  addGroups: function() {
+    var self = this;
+    Resources.find().map(function(res) {
+      self.groups.add({content: createResourceLink(res._id, res.name), id: res._id, value: res.name, className: res._id});
+    });
+  },
+  options: {
+    groupOrder: function (a, b) {
+      return a.value - b.value;
+    },
+    groupOrderSwap: function (a, b, groups) {
+    	var v = a.value;
+    	a.value = b.value;
+    	b.value = v;
+    },
+    orientation: 'top',
+    editable: true,
+    groupEditable: true,
+    start: moment().toDate(),
+    dataAttributes: ['id'],
+    onAdd: function(item, callback) {
+      var d = moment(item.start).hour(0).minute(0);
+      item.start = d.toDate();
+      item.end = d.hour(23).minute(59).toDate();
+      item.type = 'range';
+      callback(item);
+    },
+    min: moment().day(1).month(1).year(moment().year()-1).toDate(),
+    max: moment().day(31).month(12).year(moment().year()+1).toDate(),
+    zoomMin: 1000 * 60 * 60 * 24 * 5,             // one day in milliseconds
+    zoomMax: 1000 * 60 * 60 * 24 * 31 * 12     // about three months in milliseconds
+  }
+
+}
+
+
+
+
