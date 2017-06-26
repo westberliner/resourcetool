@@ -80,13 +80,22 @@ var timeline = {
   container: null,
   entries: new vis.DataSet(),
   groups: new vis.DataSet(),
+  timelineBeginAt: moment().second(0).minute(0).hour(0).day(1).month(1).year(moment().year()-1),
+  timelineEndAt: moment().second(59).minute(23).hour(59).day(31).month(12).year(moment().year()+1),
   timeline: null,
   init: function(container) {
     this.container = container;
+    // set min, max
+    this.options.min = this.timelineBeginAt.toDate();
+    this.options.max = this.timelineEndAt.toDate();
+    // hide sa, sar
+    this.options.hiddenDates[0].start = this.timelineBeginAt.isoWeekday('Saturday').format("YYYY-MM-DD HH:mm:ss");
+    this.options.hiddenDates[0].end = this.timelineBeginAt.day(8).isoWeekday('Monday').format("YYYY-MM-DD HH:mm:ss");
     this.timeline = new vis.Timeline(this.container);
     this.timeline.setOptions(this.options);
     this.timeline.setGroups(this.groups);
     this.timeline.setItems(this.entries);
+
   },
   addEntries: function() {
     var self = this;
@@ -112,7 +121,6 @@ var timeline = {
     },
     orientation: 'top',
     editable: true,
-    groupEditable: true,
     start: moment().toDate(),
     dataAttributes: ['id'],
     onAdd: function(item, callback) {
@@ -122,8 +130,15 @@ var timeline = {
       item.type = 'range';
       callback(item);
     },
-    min: moment().day(1).month(1).year(moment().year()-1).toDate(),
-    max: moment().day(31).month(12).year(moment().year()+1).toDate(),
+    hiddenDates: [
+      {start: '2013-10-26 00:00:00', end: '2013-10-28 00:00:00', repeat: 'weekly'}, // daily weekly monthly yearly
+    ],
+    snap: function (date, scale, step) {
+      var snapTo = moment(date).hour(0).minute(0).second(0);
+      return snapTo.toDate();
+    },
+    min: null,
+    max: null,
     zoomMin: 1000 * 60 * 60 * 24 * 5,             // one day in milliseconds
     zoomMax: 1000 * 60 * 60 * 24 * 31 * 12     // about three months in milliseconds
   }
