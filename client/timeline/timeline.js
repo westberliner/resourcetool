@@ -80,8 +80,8 @@ var timeline = {
   container: null,
   entries: new vis.DataSet(),
   groups: new vis.DataSet(),
-  timelineBeginAt: moment().second(0).minute(0).hour(0).day(1).month(1).year(moment().year()-1),
-  timelineEndAt: moment().second(59).minute(23).hour(59).day(31).month(12).year(moment().year()+1),
+  timelineBeginAt: moment().locale('de').second(0).minute(0).hour(0).day(1).month(1).year(moment().locale('de').year()-1),
+  timelineEndAt: moment().locale('de').second(59).minute(23).hour(59).day(31).month(12).year(moment().locale('de').year()+1),
   timeline: null,
   init: function(container) {
     this.container = container;
@@ -121,12 +121,13 @@ var timeline = {
     },
     orientation: 'top',
     editable: true,
-    start: moment().toDate(),
+    start: moment().locale('de').toDate(),
     dataAttributes: ['id'],
     onAdd: function(item, callback) {
-      var d = moment(item.start).hour(0).minute(0);
+      var d = moment(item.start).hour(0).minute(0),
+          nd = d.clone().day(d.day()+1);
       item.start = d.toDate();
-      item.end = d.hour(23).minute(59).toDate();
+      item.end = nd.toDate();
       item.type = 'range';
       callback(item);
     },
@@ -134,15 +135,47 @@ var timeline = {
       {start: '2013-10-26 00:00:00', end: '2013-10-28 00:00:00', repeat: 'weekly'}, // daily weekly monthly yearly
     ],
     snap: function (date, scale, step) {
-      var snapTo = moment(date).hour(0).minute(0).second(0);
+      var snapTo = moment(date).locale('de').hour(0).minute(0).second(0);
+
       return snapTo.toDate();
     },
+    format: {
+      minorLabels: {
+        millisecond:'SSS',
+        second:     's',
+        minute:     'HH:mm',
+        hour:       'HH:mm',
+        weekday:    'ddd D.',
+        day:        '[KW-]w D.',
+        week:       '[KW-]w',
+        month:      'MMM',
+        year:       'YYYY'
+      },
+      majorLabels: {
+        millisecond:'HH:mm:ss',
+        second:     'D MMMM HH:mm',
+        minute:     'ddd D MMMM',
+        hour:       'ddd D MMMM',
+        weekday:    'MMMM YYYY [KW-]w',
+        day:        'MMMM YYYY',
+        week:       'MMMM YYYY',
+        month:      'YYYY',
+        year:       ''
+      }
+    },
+    timeAxis: {scale: 'weekday', step: 1},
+    locales: {
+      de: {
+        current: 'Aktuelle',
+        time: 'Zeit'
+      }
+    },
+    locale: 'de',
     min: null,
     max: null,
     zoomMin: 1000 * 60 * 60 * 24 * 5,             // one day in milliseconds
     zoomMax: 1000 * 60 * 60 * 24 * 31 * 12     // about three months in milliseconds
   }
-
 }
 
 
