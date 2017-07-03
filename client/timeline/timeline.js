@@ -84,6 +84,7 @@ var timeline = {
   timelineEndAt: moment().locale('de').second(59).minute(23).hour(59).day(31).month(12).year(moment().locale('de').year()+1),
   timeline: null,
   init: function(container) {
+    var self = this;
     this.container = container;
     // set min, max
     this.options.min = this.timelineBeginAt.toDate();
@@ -95,7 +96,18 @@ var timeline = {
     this.timeline.setOptions(this.options);
     this.timeline.setGroups(this.groups);
     this.timeline.setItems(this.entries);
-
+    self.timeline.setWindow(
+      moment().isoWeekday('Monday').hour(0).minute(0).toDate(),
+      moment().day(30).hour(0).minute(0).toDate()
+    );
+    this.entries.on('update', function(event, properties, senderId) {
+      var item = properties.data[0],
+          end = moment(item.end),
+          diff = end.diff(item.start);
+      if((diff/1000/60/60/24) < 0.9) {
+        self.entries.update({id: item.id, end: end.day(end.day()+1).toDate()});
+      };
+    });
   },
   addEntries: function() {
     var self = this;
@@ -131,14 +143,16 @@ var timeline = {
       item.type = 'range';
       callback(item);
     },
+    onUpdate: function(item, callback) {
+      callback(item);
+    },
+    snap: function (date, scale, step) {
+      var snapTo = moment(date).locale('de').hour(0).minute(0).second(0);
+      return snapTo.toDate();
+    },
     hiddenDates: [
       {start: '2013-10-26 00:00:00', end: '2013-10-28 00:00:00', repeat: 'weekly'}, // daily weekly monthly yearly
     ],
-    snap: function (date, scale, step) {
-      var snapTo = moment(date).locale('de').hour(0).minute(0).second(0);
-
-      return snapTo.toDate();
-    },
     format: {
       minorLabels: {
         millisecond:'SSS',
