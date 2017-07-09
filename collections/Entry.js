@@ -41,7 +41,8 @@ Schema = new SimpleSchema({
   },
   project: {
     type: String,
-    label: "Project"
+    label: "Project",
+    optional: true
   },
   entryType: {
     type: String,

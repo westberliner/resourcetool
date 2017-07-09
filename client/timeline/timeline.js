@@ -12,6 +12,7 @@ Template.timeline.onCreated(function() {
 
   Resources.find().observeChanges({
     added: function (id, fields) {
+      timeline.groups.add({content: createResourceLink(id, fields.name), id: id, value: fields.name, className: id});
     },
     changed: function(id, fields) {
       if(undefined != fields.name) {
@@ -27,16 +28,47 @@ Template.timeline.onCreated(function() {
   });
   Entries.find().observeChanges({
     added: function (id, fields) {
+      var item = {
+        id: id,
+        start: new Date(fields.from),
+        end: new Date(fields.till),
+        type: 'range',
+        group: fields.resource,
+        className: (fields.project != undefined)?fields.project:''
+      };
+      timeline.entries.add(item);
     },
     changed: function(id, fields) {
+      var item = {id: id},
+          currentItem = timeline.entries.get(id),
+          changed = false;
       if(undefined != fields.project) {
         // for some reason we need to clear content. otherwise it will append the new content
-        var item = {id: id, className: fields.project};
+        item.className = fields.project;
+        changed = true;
+      }
+      if(undefined != fields.from && fields.from != currentItem.start) {
+        item.start = fields.from;
+        changed = true;
+      }
+      if(undefined != fields.till && fields.till != currentItem.end) {
+        item.end = fields.till;
+        changed = true;
+      }
+      if(undefined != fields.resource && fields.resource != currentItem.group) {
+        item.group = fields.resource;
+        changed = true;
+      }
+      if(changed) {
         timeline.entries.update(item);
       }
+
     },
     removed: function (id) {
-      timeline.entries.remove(id);
+      var currentItem = timeline.entries.get(id);
+      if(currentItem) {
+        timeline.entries.remove(id);
+      }
     }
   });
 
@@ -47,12 +79,6 @@ Template.timeline.onRendered(function() {
 
   timeline.init(container);
 
-  FlowRouter.subsReady("resources", function() {
-    timeline.addGroups();
-  });
-  FlowRouter.subsReady("entries", function() {
-    timeline.addEntries();
-  });
 });
 
 Template.timeline.helpers({
@@ -105,21 +131,18 @@ var timeline = {
           end = moment(item.end),
           diff = end.diff(item.start);
       if((diff/1000/60/60/24) < 0.9) {
-        self.entries.update({id: item.id, end: end.day(end.day()+1).toDate()});
+        item.end = end.day(end.day()+1).toDate();
+        self.entries.update({id: item.id, end: item.end});
       };
-    });
-  },
-  addEntries: function() {
-    var self = this;
-    Entries.find().map(function(entry) {
-      var item = {start: new Date(entry.from), end: new Date(entry.till), group: entry.resource, className: entry.project, id: entry._id};
-      self.entries.add(item);
-    });
-  },
-  addGroups: function() {
-    var self = this;
-    Resources.find().map(function(res) {
-      self.groups.add({content: createResourceLink(res._id, res.name), id: res._id, value: res.name, className: res._id});
+      if(item.id) {
+        Entries.update(item.id, {
+          $set: {
+            from: item.start,
+            till: item.end,
+            resource: item.group
+          }
+        });
+      }
     });
   },
   options: {
@@ -141,10 +164,15 @@ var timeline = {
       item.start = d.toDate();
       item.end = nd.toDate();
       item.type = 'range';
-      callback(item);
+      var entry = Entries.insert({
+        from: item.start,
+        till: item.end,
+        resource: item.group,
+        entryType: 'default'
+      });
     },
-    onUpdate: function(item, callback) {
-      callback(item);
+    onRemove: function(item, callback) {
+      Entries.remove(item.id);
     },
     snap: function (date, scale, step) {
       var snapTo = moment(date).locale('de').hour(0).minute(0).second(0);
