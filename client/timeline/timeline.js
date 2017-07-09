@@ -77,6 +77,7 @@ Template.timeline.onCreated(function() {
 Template.timeline.onRendered(function() {
   var container = document.getElementById('timeline-chart');
 
+  Template.timeline = timeline;
   timeline.init(container);
 
 });
@@ -109,6 +110,7 @@ var timeline = {
   timelineBeginAt: moment().locale('de').second(0).minute(0).hour(0).day(1).month(1).year(moment().locale('de').year()-1),
   timelineEndAt: moment().locale('de').second(59).minute(23).hour(59).day(31).month(12).year(moment().locale('de').year()+1),
   timeline: null,
+  windowRange: 30,
   init: function(container) {
     var self = this;
     this.container = container;
@@ -122,10 +124,22 @@ var timeline = {
     this.timeline.setOptions(this.options);
     this.timeline.setGroups(this.groups);
     this.timeline.setItems(this.entries);
-    self.timeline.setWindow(
+
+    this.windowRange = parseInt(($(window).width()-150)/35);
+    this.timeline.setWindow(
       moment().isoWeekday('Monday').hour(0).minute(0).toDate(),
-      moment().day(30).hour(0).minute(0).toDate()
+      moment().day(this.windowRange).hour(0).minute(0).toDate()
     );
+    this.timeline.on('rangechanged', function(range) {
+      var mStart = new moment(range.start),
+          mEnd = new moment(range.end),
+          diff = mEnd.diff(mStart, 'days');
+      if(diff > self.windowRange) {
+        self.timeline.setOptions({timeAxis: {scale: 'month', step: 1}});
+      } else {
+        self.timeline.setOptions({timeAxis: {scale: 'weekday', step: 1}});
+      }
+    });
     this.entries.on('update', function(event, properties, senderId) {
       var item = properties.data[0],
           end = moment(item.end),
