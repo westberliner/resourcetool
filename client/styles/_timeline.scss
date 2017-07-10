@@ -16,3 +16,18 @@
     width: 100%;
   }
 }
+
+div.delete {
+  margin-top: 6px;
+  padding-left: 8px;
+  font-size: 18px;
+  color: $red;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  &:before {
+    content: "\e014";
+  }
+}
